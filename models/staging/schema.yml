@@ -1,0 +1,46 @@
+version: 2
+
+sources:
+  - name: gz_raw_data
+    schema: raw
+    tables:
+      - name: sales
+        identifier: raw_gz_sales
+        description: "Sales of Greenweez / one row per product_id within each orders_id"
+        columns:
+          - name: date_date
+            description: "Date of purchase"
+          - name: orders_id
+            description: "Foreign key to ship"
+          - name: pdt_id
+            description: "Foreign key to product"
+          - name: revenue
+            description: "Revenue = quantity * selling_price"
+          - name: quantity
+            description: "Quantity of products purchased for a given order"
+        tests:
+          - unique:
+              column_name: "(orders_id || '-' || pdt_id)"
+          - dbt_utils.unique_combination_of_columns:
+              combination_of_columns:
+                - orders_id
+                - pdt_id
+
+      - name: product
+        identifier: raw_gz_product
+        columns:
+          - name: products_id
+            description: "Birincil anahtar"
+            tests:
+              - unique
+              - not_null
+
+      - name: ship
+        identifier: raw_gz_ship
+        description: "Greenweez siparişleri için nakliye verileri"
+        columns:
+          - name: orders_id
+            description: "Birincil anahtar"
+            tests:
+              - unique
+              - not_null
